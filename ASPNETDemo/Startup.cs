@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ASPNETDemo.Data;
+using Azure.Storage.Blobs;
 using FileContextCore;
+using FileContextCore.FileManager;
+using FileContextCore.Serializer;
+using FileContextCore.StoreManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,16 +25,12 @@ namespace ASPNETDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-
-            services.AddDbContext<Db>(o => o.UseFileContextDatabase());
+            services.AddDbContext<Db>(o => o.UseFileContextDatabase<JSONSerializer, AzureBlobStorageFileManager>(location: "data"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Db db)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //db.Users.Add(new User() {Email = "morrisj@live.de", Username = "Test123"});
-            //db.SaveChanges();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

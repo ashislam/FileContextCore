@@ -82,7 +82,8 @@ namespace Microsoft.Extensions.DependencyInjection
                         .TryAddTransient<XMLSerializer, XMLSerializer>()
                         .TryAddTransient<DefaultFileManager, DefaultFileManager>()
                         .TryAddTransient<EncryptedFileManager, EncryptedFileManager>()
-                        .TryAddTransient<PrivateFileManager, PrivateFileManager>());
+                        .TryAddTransient<PrivateFileManager, PrivateFileManager>()
+                        .TryAddTransient<AzureBlobStorageFileManager, AzureBlobStorageFileManager>());
 
             builder.TryAddCoreServices();
 
