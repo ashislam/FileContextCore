@@ -1,14 +1,15 @@
 using ASPNETDemo.Data;
-using Azure.Storage.Blobs;
 using FileContextCore;
 using FileContextCore.FileManager;
 using FileContextCore.Serializer;
-using FileContextCore.StoreManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
+using System.Web;
 
 namespace ASPNETDemo
 {
@@ -25,7 +26,13 @@ namespace ASPNETDemo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddDbContext<Db>(o => o.UseFileContextDatabase<JSONSerializer, AzureBlobStorageFileManager>(location: "data"));
+            services.AddHttpContextAccessor();
+            services.AddDbContext<Db>((sp, o) =>
+            {
+                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                var location = HttpUtility.ParseQueryString(httpContextAccessor.HttpContext.Request.QueryString.ToString())["studyId"] ?? "";
+                o.UseFileContextDatabase<JSONSerializer, AzureBlobStorageFileManager>(location: $"data/{location}");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
